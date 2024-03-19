@@ -5,7 +5,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.opt`
@@ -797,6 +797,15 @@ require('lazy').setup({
     },
   },
 })
+
+-- Neovide specific configrations
+-- https://neovide.dev/configuration.html
+if vim.g.neovide then
+  vim.o.guifont = 'MonoLisashy_Nerd_Font,HarmonyOS_Sans_SC:h13:#e-subpixelantialias'
+  vim.g.neovide_refresh_rate = 155
+  vim.g.neovide_cursor_antialiasing = true
+  vim.g.neovide_cursor_vfx_mode = 'pixiedust'
+end
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
