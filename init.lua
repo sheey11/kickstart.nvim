@@ -574,12 +574,38 @@ require('lazy').setup({
       --  into multiple repos for maintenance purposes.
       'hrsh7th/cmp-nvim-lsp',
       'hrsh7th/cmp-path',
+      {
+        'zbirenbaum/copilot-cmp',
+        config = true,
+        dependencies = {
+          'zbirenbaum/copilot.lua',
+          opts = {
+            suggestion = { enabled = false },
+            panel = { enabled = false },
+          },
+        },
+      },
 
       -- If you want to add a bunch of pre-configured snippets,
       --    you can use this plugin to help you. It even has snippets
       --    for various frameworks/libraries/etc. but you will have to
       --    set up the ones that are useful for you.
       -- 'rafamadriz/friendly-snippets',
+
+      -- Completion window styling
+      {
+        'onsails/lspkind.nvim',
+        config = function()
+          require('lspkind').init {
+            symbol_map = {
+              -- mode = 'symbol_text',
+              mode = 'text',
+              Copilot = '',
+            },
+          }
+          vim.api.nvim_set_hl(0, 'CmpItemKindCopilot', { fg = '#6CC644' })
+        end,
+      },
     },
     config = function()
       -- See `:help cmp`
@@ -635,9 +661,15 @@ require('lazy').setup({
           end, { 'i', 's' }),
         },
         sources = {
+          { name = 'copilot', group_index = 2 },
           { name = 'nvim_lsp' },
           { name = 'luasnip' },
           { name = 'path' },
+        },
+        formatting = {
+          format = require('lspkind').cmp_format {
+            max_width = 50,
+          },
         },
       }
     end,
