@@ -328,6 +328,7 @@ require('lazy').setup({
       'williamboman/mason-lspconfig.nvim',
       'WhoIsSethDaniel/mason-tool-installer.nvim',
 
+      'Issafalcon/lsp-overloads.nvim',
       -- Useful status updates for LSP.
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
       { 'j-hui/fidget.nvim', opts = {} },
@@ -432,6 +433,11 @@ require('lazy').setup({
               buffer = event.buf,
               callback = vim.lsp.buf.clear_references,
             })
+          end
+
+          if client and client.server_capabilities.signatureHelpProvider then
+            ---@diagnostic disable-next-line: missing-fields
+            require('lsp-overloads').setup(client, {})
           end
         end,
       })
@@ -671,7 +677,42 @@ require('lazy').setup({
             max_width = 50,
           },
         },
+        sorting = {
+          priority_weight = 2,
+          comparators = {
+            require('copilot_cmp.comparators').prioritize,
+
+            -- Below is the default comparitor list and order for nvim-cmp
+            cmp.config.compare.offset,
+            -- cmp.config.compare.scopes, --this is commented in nvim-cmp too
+            cmp.config.compare.exact,
+            cmp.config.compare.score,
+            cmp.config.compare.recently_used,
+            cmp.config.compare.locality,
+            cmp.config.compare.kind,
+            cmp.config.compare.sort_text,
+            cmp.config.compare.length,
+            cmp.config.compare.order,
+          },
+        },
       }
+
+      cmp.setup.cmdline({ '/', '?' }, {
+        mapping = cmp.mapping.preset.cmdline(),
+        sources = {
+          { name = 'buffer' },
+        },
+      })
+
+      cmp.setup.cmdline(':', {
+        mapping = cmp.mapping.preset.cmdline(),
+        sources = cmp.config.sources({
+          { name = 'path' },
+        }, {
+          { name = 'cmdline' },
+        }),
+        matching = { disallow_symbol_nonprefix_matching = false },
+      })
     end,
   },
 
